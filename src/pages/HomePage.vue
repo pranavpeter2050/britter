@@ -34,8 +34,8 @@
 
     <q-separator class="divider" size="10px" color="grey-2" />
 
-    <q-list>
-      <q-item class="q-py-md">
+    <q-list separator>
+      <q-item v-for="tweet in tweetData" :key="tweet.date" class="q-py-md">
         <q-item-section avatar top>
           <q-avatar size="lg">
             <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
@@ -48,10 +48,7 @@
             <span class="text-grey-7"> @annie_og</span></q-item-label
           >
           <q-item-label class="tweet-content text-body1">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-            enimad minim veniam, quis nostrud exercitation ullamco laboris nisi
-            ut aliquip ex ea commodo consequat.
+            {{ tweet.content }}
           </q-item-label>
 
           <div class="tweet-icons row justify-between q-mt-sm">
@@ -62,7 +59,10 @@
           </div>
         </q-item-section>
 
-        <q-item-section side top> 1 min ago </q-item-section>
+        <q-item-section side top>
+          <!-- {{ tweet.date }} -->
+          {{ formattedDate(tweet.date) }}
+        </q-item-section>
       </q-item>
     </q-list>
   </q-page>
@@ -70,13 +70,37 @@
 
 <script>
 import { defineComponent } from "vue";
+import { formatDistance } from "date-fns";
 
 export default defineComponent({
   name: "HomePage",
   data() {
     return {
       newTweetContent: "",
+      tweetData: [
+        {
+          content:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          date: 1676546321163,
+        },
+        {
+          content:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          date: 1676546398474,
+        },
+      ],
     };
+  },
+  filters: {
+    // "filters" is deprecated, so written different function in "methods"
+    relativeDate(value) {
+      return formatDistance(value, new Date());
+    },
+  },
+  methods: {
+    formattedDate(tweet_date) {
+      return formatDistance(tweet_date, new Date());
+    },
   },
 });
 </script>
