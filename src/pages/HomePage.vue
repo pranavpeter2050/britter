@@ -1,88 +1,100 @@
 <template>
-  <q-page class="">
-    <div class="q-py-lg q-px-md row items-end q-col-gutter-md">
-      <div class="col">
-        <q-input
-          class="new-tweet"
-          bottom-slots
-          v-model="newTweetContent"
-          placeholder="What's happening?"
-          counter
-          maxlength="280"
-          :dense="dense"
-          autogrow
-        >
-          <template v-slot:before>
-            <q-avatar size="lg">
-              <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
-            </q-avatar>
-          </template>
-        </q-input>
+  <q-page class="relative-position">
+    <q-scroll-area class="absolute fullscreen">
+      <div class="q-py-lg q-px-md row items-end q-col-gutter-md">
+        <div class="col">
+          <q-input
+            class="new-tweet"
+            bottom-slots
+            v-model="newTweetContent"
+            placeholder="What's happening?"
+            counter
+            maxlength="280"
+            :dense="dense"
+            autogrow
+          >
+            <template v-slot:before>
+              <q-avatar size="lg">
+                <img src="https://cdn.quasar.dev/img/avatar5.jpg" />
+              </q-avatar>
+            </template>
+          </q-input>
+        </div>
+        <div class="col col-shrink">
+          <q-btn
+            @click="addNewTweet"
+            class="q-mb-lg"
+            :disabled="!newTweetContent"
+            unelevated
+            rounded
+            no-caps
+            color="primary"
+            label="Tweet"
+          />
+        </div>
       </div>
-      <div class="col col-shrink">
-        <q-btn
-          @click="addNewTweet"
-          class="q-mb-lg"
-          :disabled="!newTweetContent"
-          unelevated
-          rounded
-          no-caps
-          color="primary"
-          label="Tweet"
-        />
-      </div>
-    </div>
 
-    <q-separator class="divider" size="10px" color="grey-2" />
+      <q-separator class="divider" size="10px" color="grey-2" />
 
-    <q-list separator>
-      <transition-group
-        appear
-        enter-active-class="animated fadeIn"
-        leave-active-class="animated fadeOut"
-      >
-        <q-item
-          v-for="tweet in tweetData"
-          :key="tweet.date"
-          class="tweet q-py-md"
+      <q-list separator>
+        <transition-group
+          appear
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
         >
-          <q-item-section avatar top>
-            <q-avatar size="lg">
-              <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
-            </q-avatar>
-          </q-item-section>
+          <q-item
+            v-for="tweet in tweetData"
+            :key="tweet.date"
+            class="tweet q-py-md"
+          >
+            <q-item-section avatar top>
+              <q-avatar size="lg">
+                <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
+              </q-avatar>
+            </q-item-section>
 
-          <q-item-section>
-            <q-item-label class="text-subtitle1">
-              <strong>Annie</strong>
-              <span class="text-grey-7"> @annie_og</span></q-item-label
-            >
-            <q-item-label class="tweet-content text-body1">
-              {{ tweet.content }}
-            </q-item-label>
+            <q-item-section>
+              <q-item-label class="text-subtitle1">
+                <strong>Annie</strong>
+                <span class="text-grey-7">
+                  @annie_og <br class="lt-md" />&bull;
+                  {{ formattedDate(tweet.date) }}</span
+                ></q-item-label
+              >
+              <q-item-label class="tweet-content text-body1">
+                {{ tweet.content }}
+              </q-item-label>
 
-            <div class="tweet-icons row justify-between q-mt-sm">
-              <q-btn flat round color="grey" size="sm" icon="far fa-comment" />
-              <q-btn flat round color="grey" size="sm" icon="fas fa-retweet" />
-              <q-btn flat round color="grey" size="sm" icon="far fa-heart" />
-              <q-btn
-                @click="deleteTweet(tweet)"
-                flat
-                round
-                color="grey"
-                size="sm"
-                icon="fas fa-trash"
-              />
-            </div>
-          </q-item-section>
-
-          <q-item-section side top>
-            <!-- {{ tweet.date }} -->
-            {{ formattedDate(tweet.date) }}
-          </q-item-section>
-        </q-item>
-      </transition-group>
-    </q-list>
+              <div class="tweet-icons row justify-between q-mt-sm">
+                <q-btn
+                  flat
+                  round
+                  color="grey"
+                  size="sm"
+                  icon="far fa-comment"
+                />
+                <q-btn
+                  flat
+                  round
+                  color="grey"
+                  size="sm"
+                  icon="fas fa-retweet"
+                />
+                <q-btn flat round color="grey" size="sm" icon="far fa-heart" />
+                <q-btn
+                  @click="deleteTweet(tweet)"
+                  flat
+                  round
+                  color="grey"
+                  size="sm"
+                  icon="fas fa-trash"
+                />
+              </div>
+            </q-item-section>
+          </q-item>
+        </transition-group>
+      </q-list>
+    </q-scroll-area>
   </q-page>
 </template>
 
