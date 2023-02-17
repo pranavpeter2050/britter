@@ -36,42 +36,52 @@
     <q-separator class="divider" size="10px" color="grey-2" />
 
     <q-list separator>
-      <q-item v-for="tweet in tweetData" :key="tweet.date" class="q-py-md">
-        <q-item-section avatar top>
-          <q-avatar size="lg">
-            <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
-          </q-avatar>
-        </q-item-section>
+      <transition-group
+        appear
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+      >
+        <q-item
+          v-for="tweet in tweetData"
+          :key="tweet.date"
+          class="tweet q-py-md"
+        >
+          <q-item-section avatar top>
+            <q-avatar size="lg">
+              <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
+            </q-avatar>
+          </q-item-section>
 
-        <q-item-section>
-          <q-item-label class="text-subtitle1">
-            <strong>Annie</strong>
-            <span class="text-grey-7"> @annie_og</span></q-item-label
-          >
-          <q-item-label class="tweet-content text-body1">
-            {{ tweet.content }}
-          </q-item-label>
+          <q-item-section>
+            <q-item-label class="text-subtitle1">
+              <strong>Annie</strong>
+              <span class="text-grey-7"> @annie_og</span></q-item-label
+            >
+            <q-item-label class="tweet-content text-body1">
+              {{ tweet.content }}
+            </q-item-label>
 
-          <div class="tweet-icons row justify-between q-mt-sm">
-            <q-btn flat round color="grey" size="sm" icon="far fa-comment" />
-            <q-btn flat round color="grey" size="sm" icon="fas fa-retweet" />
-            <q-btn flat round color="grey" size="sm" icon="far fa-heart" />
-            <q-btn
-              @click="deleteTweet(tweet)"
-              flat
-              round
-              color="grey"
-              size="sm"
-              icon="fas fa-trash"
-            />
-          </div>
-        </q-item-section>
+            <div class="tweet-icons row justify-between q-mt-sm">
+              <q-btn flat round color="grey" size="sm" icon="far fa-comment" />
+              <q-btn flat round color="grey" size="sm" icon="fas fa-retweet" />
+              <q-btn flat round color="grey" size="sm" icon="far fa-heart" />
+              <q-btn
+                @click="deleteTweet(tweet)"
+                flat
+                round
+                color="grey"
+                size="sm"
+                icon="fas fa-trash"
+              />
+            </div>
+          </q-item-section>
 
-        <q-item-section side top>
-          <!-- {{ tweet.date }} -->
-          {{ formattedDate(tweet.date) }}
-        </q-item-section>
-      </q-item>
+          <q-item-section side top>
+            <!-- {{ tweet.date }} -->
+            {{ formattedDate(tweet.date) }}
+          </q-item-section>
+        </q-item>
+      </transition-group>
     </q-list>
   </q-page>
 </template>
@@ -115,6 +125,7 @@ export default defineComponent({
         date: Date.now(),
       };
       this.tweetData.unshift(newTweet);
+      this.newTweetContent = "";
     },
     deleteTweet(tweet) {
       let dateToDelete = tweet.date;
@@ -138,6 +149,9 @@ export default defineComponent({
   border-top: 1px solid
   border-bottom: 1px solid
   border-color: $grey-4
+
+.tweet:not(:first-child)
+  border-top: 1px solid rgba(0, 0, 0, 0.12)
 
 .tweet-content
   white-space: pre-line
