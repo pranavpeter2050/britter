@@ -56,7 +56,14 @@
             <q-btn flat round color="grey" size="sm" icon="far fa-comment" />
             <q-btn flat round color="grey" size="sm" icon="fas fa-retweet" />
             <q-btn flat round color="grey" size="sm" icon="far fa-heart" />
-            <q-btn flat round color="grey" size="sm" icon="fas fa-trash" />
+            <q-btn
+              @click="deleteTweet(tweet)"
+              flat
+              round
+              color="grey"
+              size="sm"
+              icon="fas fa-trash"
+            />
           </div>
         </q-item-section>
 
@@ -108,6 +115,14 @@ export default defineComponent({
         date: Date.now(),
       };
       this.tweetData.unshift(newTweet);
+    },
+    deleteTweet(tweet) {
+      let dateToDelete = tweet.date;
+      let index = this.tweetData.findIndex(
+        (tweet) => tweet.date === dateToDelete
+      );
+      // console.log("index of tweet: " + index);
+      this.tweetData.splice(index, 1);
     },
   },
 });
