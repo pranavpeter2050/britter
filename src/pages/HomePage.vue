@@ -21,6 +21,7 @@
       </div>
       <div class="col col-shrink">
         <q-btn
+          @click="addNewTweet"
           class="q-mb-lg"
           :disabled="!newTweetContent"
           unelevated
@@ -100,6 +101,13 @@ export default defineComponent({
   methods: {
     formattedDate(tweet_date) {
       return formatDistance(tweet_date, new Date());
+    },
+    addNewTweet() {
+      let newTweet = {
+        content: this.newTweetContent,
+        date: Date.now(),
+      };
+      this.tweetData.unshift(newTweet);
     },
   },
 });
