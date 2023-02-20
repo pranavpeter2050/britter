@@ -108,6 +108,7 @@ import {
   where,
   onSnapshot,
   orderBy,
+  addDoc,
 } from "firebase/firestore";
 
 export default defineComponent({
@@ -116,18 +117,6 @@ export default defineComponent({
     return {
       newTweetContent: "",
       tweetData: [],
-      // tweetData: [
-      //   {
-      //     content:
-      //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      //     date: 1676546321163,
-      //   },
-      //   {
-      //     content:
-      //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      //     date: 1676546398474,
-      //   },
-      // ],
     };
   },
   filters: {
@@ -140,12 +129,15 @@ export default defineComponent({
     formattedDate(tweet_date) {
       return formatDistance(tweet_date, new Date());
     },
-    addNewTweet() {
+    async addNewTweet() {
       let newTweet = {
         content: this.newTweetContent,
         date: Date.now(),
       };
-      this.tweetData.unshift(newTweet);
+      // this.tweetData.unshift(newTweet);
+      // Add a new document with a generated id.
+      const docRef = await addDoc(collection(db, "tweets"), newTweet);
+      console.log("Document written with ID: ", docRef.id);
       this.newTweetContent = "";
     },
     deleteTweet(tweet) {
