@@ -44,7 +44,7 @@
         >
           <q-item
             v-for="tweet in tweetData"
-            :key="tweet.date"
+            :key="tweet.id"
             class="tweet q-py-md"
           >
             <q-item-section avatar top>
@@ -109,6 +109,8 @@ import {
   onSnapshot,
   orderBy,
   addDoc,
+  doc,
+  deleteDoc,
 } from "firebase/firestore";
 
 export default defineComponent({
@@ -140,13 +142,8 @@ export default defineComponent({
       console.log("Document written with ID: ", docRef.id);
       this.newTweetContent = "";
     },
-    deleteTweet(tweet) {
-      let dateToDelete = tweet.date;
-      let index = this.tweetData.findIndex(
-        (tweet) => tweet.date === dateToDelete
-      );
-      // console.log("index of tweet: " + index);
-      this.tweetData.splice(index, 1);
+    async deleteTweet(tweet) {
+      await deleteDoc(doc(db, "tweets", tweet.id));
     },
   },
   mounted() {
@@ -155,15 +152,20 @@ export default defineComponent({
     const unsubscribe = onSnapshot(q, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         let tweetChange = change.doc.data();
+        tweetChange.id = change.doc.id;
         if (change.type === "added") {
-          console.log("New tweet: ", change.doc.data());
+          console.log("New tweet: ", tweetChange);
           this.tweetData.unshift(tweetChange);
         }
         if (change.type === "modified") {
-          console.log("Modified tweet: ", change.doc.data());
+          console.log("Modified tweet: ", tweetChange);
         }
         if (change.type === "removed") {
-          console.log("Removed tweet: ", change.doc.data());
+          console.log("Removed tweet: ", tweetChange);
+          let indexOfTweet = this.tweetData.findIndex(
+            (tweet) => tweet.id === tweetChange.id
+          );
+          this.tweetData.splice(indexOfTweet, 1);
         }
       });
     });
