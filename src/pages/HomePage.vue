@@ -80,7 +80,14 @@
                   size="sm"
                   icon="fas fa-retweet"
                 />
-                <q-btn flat round color="grey" size="sm" icon="far fa-heart" />
+                <q-btn
+                  @click="toggleLiked(tweet)"
+                  flat
+                  round
+                  :color="tweet.liked ? 'pink' : 'grey'"
+                  size="sm"
+                  :icon="tweet.liked ? 'fas fa-heart' : 'far fa-heart'"
+                />
                 <q-btn
                   @click="deleteTweet(tweet)"
                   flat
@@ -111,6 +118,7 @@ import {
   addDoc,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 export default defineComponent({
@@ -135,6 +143,7 @@ export default defineComponent({
       let newTweet = {
         content: this.newTweetContent,
         date: Date.now(),
+        liked: false,
       };
       // this.tweetData.unshift(newTweet);
       // Add a new document with a generated id.
@@ -144,6 +153,14 @@ export default defineComponent({
     },
     async deleteTweet(tweet) {
       await deleteDoc(doc(db, "tweets", tweet.id));
+    },
+    async toggleLiked(tweet) {
+      const tweetRef = doc(db, "tweets", tweet.id);
+
+      // Toggle the "liked" field of the tweet_id
+      await updateDoc(tweetRef, {
+        liked: !tweet.liked,
+      });
     },
   },
   mounted() {
@@ -159,6 +176,10 @@ export default defineComponent({
         }
         if (change.type === "modified") {
           console.log("Modified tweet: ", tweetChange);
+          let indexOfTweet = this.tweetData.findIndex(
+            (tweet) => tweet.id === tweetChange.id
+          );
+          Object.assign(this.tweetData[indexOfTweet], tweetChange);
         }
         if (change.type === "removed") {
           console.log("Removed tweet: ", tweetChange);
