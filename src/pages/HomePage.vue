@@ -99,26 +99,35 @@
 </template>
 
 <script>
+import db from "src/boot/firebase";
 import { defineComponent } from "vue";
 import { formatDistance } from "date-fns";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 
 export default defineComponent({
   name: "HomePage",
   data() {
     return {
       newTweetContent: "",
-      tweetData: [
-        {
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          date: 1676546321163,
-        },
-        {
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-          date: 1676546398474,
-        },
-      ],
+      tweetData: [],
+      // tweetData: [
+      //   {
+      //     content:
+      //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      //     date: 1676546321163,
+      //   },
+      //   {
+      //     content:
+      //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      //     date: 1676546398474,
+      //   },
+      // ],
     };
   },
   filters: {
@@ -147,6 +156,25 @@ export default defineComponent({
       // console.log("index of tweet: " + index);
       this.tweetData.splice(index, 1);
     },
+  },
+  mounted() {
+    //code below taken from: https://firebase.google.com/docs/firestore/query-data/listen?authuser=1#web-version-9-modular
+    const q = query(collection(db, "tweets"), orderBy("date"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        let tweetChange = change.doc.data();
+        if (change.type === "added") {
+          console.log("New tweet: ", change.doc.data());
+          this.tweetData.unshift(tweetChange);
+        }
+        if (change.type === "modified") {
+          console.log("Modified tweet: ", change.doc.data());
+        }
+        if (change.type === "removed") {
+          console.log("Removed tweet: ", change.doc.data());
+        }
+      });
+    });
   },
 });
 </script>
